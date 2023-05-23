@@ -17,7 +17,10 @@ channel.queue_declare(queue='article_created')
 
 # Define a callback function to process messages
 def callback(ch, method, properties, body):
+    print("callback")
     try:
+        print("# Get a message")
+        print(body.decode())
         # Get a message
         message = json.loads(body.decode())
         # Create a node in Neo4j
