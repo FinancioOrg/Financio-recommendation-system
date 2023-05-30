@@ -8,7 +8,7 @@ def insert_record_to_neo4j(id_value, name):
     neo4j_password = os.environ.get('neo4j_password')  # Update with your Neo4j password
     neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
     
-    with driver.session() as session:
+    with neo4j_driver.session() as session:
         # Create a new record with the provided id value
         query = "CREATE (n:Record {nodeID: $id_value, name: $name})"
         session.run(query, id_value=id_value, name=name)
