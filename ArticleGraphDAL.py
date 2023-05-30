@@ -1,11 +1,12 @@
 from neo4j import GraphDatabase
+import os
 
 def insert_record_to_neo4j(id_value, name):
     # Create a connection to the Neo4j database (graph container)
-    uri = "bolt://localhost:7687"  # Update with the appropriate URI
-    username = "neo4j"  # Update with your username
-    password = "password"  # Update with your password
-    driver = GraphDatabase.driver(uri, auth=(username, password))
+    neo4j_uri = os.environ.get('neo4j_uri')
+    neo4j_username = os.environ.get('neo4j_username')  # Update with your Neo4j username
+    neo4j_password = os.environ.get('neo4j_password')  # Update with your Neo4j password
+    neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
     
     with driver.session() as session:
         # Create a new record with the provided id value
@@ -18,9 +19,9 @@ def insert_record_to_neo4j(id_value, name):
 
 def connect_articles(article_id1, article_id2):
     # Connect to the Neo4j database
-    neo4j_uri = "bolt://localhost:7687"  # Update with the appropriate Neo4j URI
-    neo4j_username = "neo4j"  # Update with your Neo4j username
-    neo4j_password = "password"  # Update with your Neo4j password
+    neo4j_uri = os.environ.get('neo4j_uri')
+    neo4j_username = os.environ.get('neo4j_username')  # Update with your Neo4j username
+    neo4j_password = os.environ.get('neo4j_password')  # Update with your Neo4j password
     neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
 
     with neo4j_driver.session() as session:

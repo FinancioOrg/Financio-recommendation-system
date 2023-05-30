@@ -2,6 +2,7 @@ from neo4j import GraphDatabase
 from azure.storage.blob import BlobServiceClient
 from bs4 import BeautifulSoup
 import re
+import os
 
 class Article:
     def __init__(self, id, title, body):
@@ -10,15 +11,14 @@ class Article:
         self.body = body
 
 def retrieveData(exclude_id):
-  
-    # Create a connection to the Neo4j database
-    neo4j_uri = "bolt://localhost:7687"  # Update with the appropriate Neo4j URI
-    neo4j_username = "neo4j"  # Update with your Neo4j username
-    neo4j_password = "password"  # Update with your Neo4j password
+
+    neo4j_uri = os.environ.get('neo4j_uri')
+    neo4j_username = os.environ.get('neo4j_username')  # Update with your Neo4j username
+    neo4j_password = os.environ.get('neo4j_password')  # Update with your Neo4j password
     neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_username, neo4j_password))
 
     # Connect to Azure Blob Storage
-    blob_connection_string = "DefaultEndpointsProtocol=https;AccountName=financiostorage;AccountKey=iEodRKrn8zoeBZF9KJ6Exdc4ZcyKVcB21T39tMUHt1yrzKanP4fcoM+LyYVSngfxpxQs9Sz2ifqo+ASt+UUVbQ==;EndpointSuffix=core.windows.net"
+    blob_connection_string = os.environ.get('blob_connection_string')
     blob_service_client = BlobServiceClient.from_connection_string(blob_connection_string)
 
     articles = []
@@ -55,7 +55,8 @@ def retrieveData(exclude_id):
 
 
 def retrieveArticle(uri):
-    blob_service_client = BlobServiceClient.from_connection_string('DefaultEndpointsProtocol=https;AccountName=financiostorage;AccountKey=iEodRKrn8zoeBZF9KJ6Exdc4ZcyKVcB21T39tMUHt1yrzKanP4fcoM+LyYVSngfxpxQs9Sz2ifqo+ASt+UUVbQ==;EndpointSuffix=core.windows.net')
+    blob_connection_string = os.environ.get('blob_connection_string')
+    blob_service_client = BlobServiceClient.from_connection_string(blob_connection_string)
     container_name, blob_name = uri.split('/')[-2:]
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
     article_body = blob_client.download_blob().content_as_text()

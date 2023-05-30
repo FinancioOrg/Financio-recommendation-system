@@ -5,12 +5,15 @@ from ArticleDAL import retrieveData
 from ArticleDAL import retrieveArticle
 from ArticleGraphDAL import insert_record_to_neo4j
 from ArticleGraphDAL import connect_articles
+import os
 
 # Connect to RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+rabbitmq_connection_string = os.environ.get('rabbitmq_connection_string')
+parameters = pika.URLParameters("amqps://moxkbgjc:Zw_YPZUFNk4PZkbgPz8wdMiMt_9fs3Lw@goose.rmq2.cloudamqp.com/moxkbgjc")
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-model = SentenceTransformer('./stsb-roberta-base_offline')
+model = SentenceTransformer('sentence-transformers/stsb-roberta-base')
 
 # Declare the queue
 channel.queue_declare(queue='article_created')
