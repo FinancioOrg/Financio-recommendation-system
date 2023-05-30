@@ -14,7 +14,7 @@ def insert_record_to_neo4j(id_value, name):
         session.run(query, id_value=id_value, name=name)
     
     # Close the database connection
-    driver.close()
+    neo4j_driver.close()
     print("insert_record_to_neo4j")
 
 def connect_articles(article_id1, article_id2):
