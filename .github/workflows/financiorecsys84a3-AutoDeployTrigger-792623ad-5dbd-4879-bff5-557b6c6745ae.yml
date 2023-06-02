@@ -1,0 +1,42 @@
+name: Trigger auto deployment for financiorecsys84a3
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/financiorecsys84a3-AutoDeployTrigger-792623ad-5dbd-4879-bff5-557b6c6745ae.yml'
+
+  # Allow mannually trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.FINANCIORECSYS84A3_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.FINANCIORECSYS84A3_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.FINANCIORECSYS84A3_REGISTRY_PASSWORD }}
+          containerAppName: financiorecsys84a3
+          resourceGroup: DefaultResourceGroup-WEU
+          imageToBuild: btymo/financio-recsys:${{ github.sha }}
+          dockerfilePath: Dockerfile
+
+     
+
